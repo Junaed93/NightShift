@@ -1,10 +1,10 @@
 {
-  "name": "@ju_naed93/nightshift",
+  "name": "@junaed93/nightshift",
   "version": "0.1.0",
   "description": "Overnight supervisor for headless coding agents (Claude Code, Codex, OpenCode).",
   "type": "module",
   "license": "MIT",
-  "author": "Junaed",
+  "author": "Junaed Khandakar",
   "bin": {
     "nightshift": "src/cli.mjs"
   },

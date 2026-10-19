@@ -22,7 +22,7 @@ tasks/queue/*.md  ->  worktree  ->  agent  ->  gate  ->  commit on nightshift/<i
 Requires Node 20+ and git.
 
 ```powershell
-npm install -g @ju_naed93/nightshift
+npm install -g @junaed93/nightshift
 ```
 
 The command it installs is `nightshift`.
@@ -44,8 +44,8 @@ npm install -g github:Junaed93/NightShift
 Offline, move the tarball by hand:
 
 ```powershell
-npm pack                          # -> ju_naed93-nightshift-0.1.0.tgz
-npm install -g .\ju_naed93-nightshift-0.1.0.tgz
+npm pack                          # -> junaed93-nightshift-0.1.0.tgz
+npm install -g .\junaed93-nightshift-0.1.0.tgz
 ```
 
 ## Quickstart
@@ -216,7 +216,7 @@ npm publish
 `prepublishOnly` runs `npm test`, so a tree that fails verification cannot be
 published.
 
-The package is scoped (`@ju_naed93/nightshift`) because the registry rejects the
+The package is scoped (`@junaed93/nightshift`) because the registry rejects the
 unscoped name as "too similar to existing package night-shift", a 2017 macOS
 Night Shift toggle. `publishConfig.access` is `public`, so no `--access` flag is
 needed. The installed command is still `nightshift`.
