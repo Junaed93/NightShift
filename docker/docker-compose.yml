@@ -1,0 +1,19 @@
+# Usage (from D:\nightshift):
+#   docker compose -f docker/docker-compose.yml run --rm nightshift
+# with TARGET_REPO pointing at the repo you want worked on.
+#
+# Mounts the target repo only. The tool is mounted read-only. Nothing else from
+# the host is visible, which is the point.
+
+services:
+  nightshift:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    working_dir: /work
+    volumes:
+      - ${TARGET_REPO:-..}:/work
+      - ..:/opt/nightshift:ro
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    command: ["run", "--cwd", "/work"]

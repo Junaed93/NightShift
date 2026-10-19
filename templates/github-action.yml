@@ -1,0 +1,53 @@
+// TEMPLATE - copy to .github/workflows/nightshift.yml in your project.
+// Runs the whole queue once a night on a fresh runner and opens a PR.
+//
+// Not wired up yet: the agent CLI install, the auth secret, and the path to
+// nightshift. Adjust the TODOs before enabling the schedule.
+
+name: nightshift
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *" # 02:00 UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install harness
+        run: npm install -g @anthropic-ai/claude-code # TODO: or codex / opencode
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Run nightshift
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          git config user.name nightshift
+          git config user.email nightshift@localhost
+          node ../nightshift/src/cli.mjs run --cwd "$PWD" || true
+        # TODO: checkout this repo next to your project, e.g.
+        #   git clone https://github.com/you/nightshift ../nightshift
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: nightshift/autopilot
+          title: "nightshift: overnight tasks"
+          commit-message: "nightshift: overnight run"
+          body-path: .nightshift/REPORT.md
+          delete-branch: true

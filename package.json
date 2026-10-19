@@ -1,0 +1,19 @@
+{
+  "name": "nightshift",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Overnight supervisor for headless coding agents (Claude Code, Codex, OpenCode).",
+  "type": "module",
+  "bin": {
+    "nightshift": "src/cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "run": "node src/cli.mjs run",
+    "once": "node src/cli.mjs run --once",
+    "status": "node src/cli.mjs status",
+    "demo": "node src/cli.mjs run --once --dry-run"
+  }
+}
