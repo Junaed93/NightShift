@@ -22,27 +22,29 @@ tasks/queue/*.md  ->  worktree  ->  agent  ->  gate  ->  commit on nightshift/<i
 Requires Node 20+ and git.
 
 ```powershell
+npm install -g nightshift
+```
+
+Until it reaches the registry, install from git instead:
+
+```powershell
 git clone https://github.com/Junaed93/NightShift.git D:\nightshift
 cd D:\nightshift
 npm link                          # gives you `nightshift` on PATH, everywhere
 ```
 
-Other machines, no clone needed:
+Or straight from GitHub, no clone:
 
 ```powershell
 npm install -g github:Junaed93/NightShift
 ```
 
-Move it around by hand:
+Offline, move the tarball by hand:
 
 ```powershell
 npm pack                          # -> nightshift-0.1.0.tgz
 npm install -g .\nightshift-0.1.0.tgz
 ```
-
-NightShift is not on the npm registry yet, and the name `nightshift` is still
-free there. To publish it: delete `"private": true`, run
-`npm publish --access public`, and `npm install -g nightshift` works anywhere.
 
 ## Quickstart
 
@@ -198,3 +200,17 @@ The supervisor must run on a machine that stays awake — that is the whole poin
 - [ ] PR mode (`gh pr create` per task) instead of local branches
 - [ ] resume a failed task with its harness session id
 - [ ] daily digest instead of per-run webhook
+
+## Releasing
+
+```powershell
+npm login              # once per machine
+npm test               # same checks that run before publish
+npm version patch      # or minor / major; commits and tags
+git push --follow-tags
+npm publish
+```
+
+`prepublishOnly` runs `npm test`, so a tree that fails verification cannot be
+published. The registry name `nightshift` is free.
+

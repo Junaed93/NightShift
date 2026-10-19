@@ -1,9 +1,10 @@
 {
   "name": "nightshift",
   "version": "0.1.0",
-  "private": true,
   "description": "Overnight supervisor for headless coding agents (Claude Code, Codex, OpenCode).",
   "type": "module",
+  "license": "MIT",
+  "author": "Junaed",
   "bin": {
     "nightshift": "src/cli.mjs"
   },
@@ -12,24 +13,34 @@
     "prompts",
     "templates",
     "docker",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Junaed93/NightShift.git"
   },
+  "homepage": "https://github.com/Junaed93/NightShift#readme",
+  "bugs": {
+    "url": "https://github.com/Junaed93/NightShift/issues"
+  },
   "keywords": [
     "agent",
+    "agents",
     "autonomous",
     "claude-code",
     "codex",
     "opencode",
-    "orchestrator"
+    "orchestrator",
+    "cli",
+    "overnight"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
+    "test": "node scripts/verify.mjs",
+    "prepublishOnly": "npm test",
     "run": "node src/cli.mjs run",
     "once": "node src/cli.mjs run --once",
     "status": "node src/cli.mjs status",
