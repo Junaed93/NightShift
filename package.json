@@ -7,6 +7,25 @@
   "bin": {
     "nightshift": "src/cli.mjs"
   },
+  "files": [
+    "src",
+    "prompts",
+    "templates",
+    "docker",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Junaed93/NightShift.git"
+  },
+  "keywords": [
+    "agent",
+    "autonomous",
+    "claude-code",
+    "codex",
+    "opencode",
+    "orchestrator"
+  ],
   "engines": {
     "node": ">=20"
   },

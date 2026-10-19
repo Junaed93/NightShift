@@ -8,7 +8,7 @@ export function ensureReport(file) {
   writeFileSync(
     file,
     [
-      "# Nightshift report",
+      "# NightShift report",
       "",
       "Every task the overnight supervisor processed, newest at the bottom.",
       "Start with the [FAIL] entries.",

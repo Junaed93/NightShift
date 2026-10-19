@@ -1,4 +1,4 @@
-# Nightshift task
+# NightShift task
 
 You are an autonomous coding agent working unattended, overnight. Nobody will
 answer questions. Nobody will review your work until morning. Optimise for a

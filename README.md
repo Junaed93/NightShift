@@ -17,31 +17,55 @@ tasks/queue/*.md  ->  worktree  ->  agent  ->  gate  ->  commit on nightshift/<i
                                     +-> tasks/failed/ + REPORT.md entry
 ```
 
+## Install
+
+Requires Node 20+ and git.
+
+```powershell
+git clone https://github.com/Junaed93/NightShift.git D:\nightshift
+cd D:\nightshift
+npm link                          # gives you `nightshift` on PATH, everywhere
+```
+
+Other machines, no clone needed:
+
+```powershell
+npm install -g github:Junaed93/NightShift
+```
+
+Move it around by hand:
+
+```powershell
+npm pack                          # -> nightshift-0.1.0.tgz
+npm install -g .\nightshift-0.1.0.tgz
+```
+
+NightShift is not on the npm registry yet, and the name `nightshift` is still
+free there. To publish it: delete `"private": true`, run
+`npm publish --access public`, and `npm install -g nightshift` works anywhere.
+
 ## Quickstart
 
 ```powershell
 # 1. scaffold the repo you want worked on
-node D:\nightshift\src\cli.mjs init --cwd C:\code\myapp
+nightshift init --cwd C:\code\myapp
 
 # 2. set the gate to your real check
-#    nightshift.config.json -> "gate": ["npm test", "npm run build"]
+#    C:\code\myapp\nightshift.config.json -> "gate": ["npm test", "npm run build"]
 
 # 3. prove the plumbing for free (no model calls)
-node D:\nightshift\src\cli.mjs run --cwd C:\code\myapp --dry-run --once
+nightshift run --cwd C:\code\myapp --dry-run --once
 
 # 4. one real task
-node D:\nightshift\src\cli.mjs run --cwd C:\code\myapp --once
+nightshift run --cwd C:\code\myapp --once
 
 # 5. the whole queue, then read the report
-node D:\nightshift\src\cli.mjs run --cwd C:\code\myapp
-node D:\nightshift\src\cli.mjs status --cwd C:\code\myapp
+nightshift run --cwd C:\code\myapp
+nightshift status --cwd C:\code\myapp
 ```
 
-Optional: make it a command.
-
-```powershell
-cd D:\nightshift; npm link; nightshift status --cwd C:\code\myapp
-```
+Without a global install, run it in place:
+`node D:\nightshift\src\cli.mjs run --cwd C:\code\myapp`.
 
 ## A task
 
