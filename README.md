@@ -1,5 +1,8 @@
 # nightshift
 
+[![npm](https://img.shields.io/npm/v/@junaed93/nightshift)](https://www.npmjs.com/package/@junaed93/nightshift)
+[![license](https://img.shields.io/npm/l/@junaed93/nightshift)](LICENSE)
+
 Overnight supervisor for headless coding agents. Drop small, verifiable tasks
 into a queue, go to sleep, wake up to a report and one git branch per task.
 
