@@ -27,18 +27,18 @@ npm install -g @junaed93/nightshift
 
 The command it installs is `nightshift`.
 
-Until it reaches the registry, install from git instead:
+For unreleased changes, install straight from GitHub:
+
+```powershell
+npm install -g github:Junaed93/NightShift
+```
+
+For development, clone and link:
 
 ```powershell
 git clone https://github.com/Junaed93/NightShift.git D:\nightshift
 cd D:\nightshift
 npm link                          # gives you `nightshift` on PATH, everywhere
-```
-
-Or straight from GitHub, no clone:
-
-```powershell
-npm install -g github:Junaed93/NightShift
 ```
 
 Offline, move the tarball by hand:
@@ -205,16 +205,53 @@ The supervisor must run on a machine that stays awake — that is the whole poin
 
 ## Releasing
 
+Releases go out from CI, not from a laptop. `.github/workflows/publish.yml`
+publishes on any `v*` tag using trusted publishing (OIDC), so there is no npm
+token in this repo and none in the workflow's secrets:
+
 ```powershell
-npm login              # once per machine
-npm test               # same checks that run before publish
 npm version patch      # or minor / major; commits and tags
 git push --follow-tags
-npm publish
 ```
 
+The tag starts the workflow, which installs, runs `npm test`, and publishes.
+npm verifies the workflow's identity over OIDC and attaches a provenance
+attestation, so every release traces back to a commit.
+
+One-time setup per package: on npmjs.com, open the package, then
+Settings -> Trusted Publisher -> GitHub Actions, and enter:
+
+| Field | Value |
+| --- | --- |
+| Organization or user | `Junaed93` |
+| Repository | `NightShift` |
+| Workflow filename | `publish.yml` |
+| Environment name | leave blank |
+| Allowed actions | `npm publish` |
+
+The environment name must stay blank to match the workflow. npm expires a new
+trusted publisher if its first publish does not succeed within 2 days, so
+exercise it fairly soon after saving.
+
+### Publishing by hand
+
+Only needed before the trusted publisher exists. npm requires 2FA for every
+publish, so this is interactive:
+
+```powershell
+npm login
+npm test
+npm publish            # prompts for a one-time password
+```
+
+A granular access token with **bypass 2FA** enabled can publish without the
+prompt, but npm is phasing those out and they cannot be used for account
+settings. Prefer the workflow.
+
 `prepublishOnly` runs `npm test`, so a tree that fails verification cannot be
-published.
+published from either path.
+
+### Name
 
 The package is scoped (`@junaed93/nightshift`) because the registry rejects the
 unscoped name as "too similar to existing package night-shift", a 2017 macOS
