@@ -20,59 +20,179 @@ tasks/queue/*.md  ->  worktree  ->  agent  ->  gate  ->  commit on nightshift/<i
                                     +-> tasks/failed/ + REPORT.md entry
 ```
 
+## In one sentence
+
+You write to-do files, go to sleep, and every task comes back as its own git
+branch that either passed your tests or was rejected.
+
 ## Install
 
-Requires Node 20+ and git.
+You need **Node 20 or newer** and **git**. Confirm both:
+
+```powershell
+node --version     # v20.x.x or higher
+git --version
+```
+
+Then install:
 
 ```powershell
 npm install -g @junaed93/nightshift
+nightshift version
 ```
 
-The command it installs is `nightshift`.
+If `nightshift version` prints a number, you are done.
 
-For unreleased changes, install straight from GitHub:
+If the terminal says `nightshift is not recognized`, npm's global folder is not
+on your `PATH`. Run `npm config get prefix`, add that folder to `PATH`, and
+reopen the terminal.
+
+NightShift drives an agent, it does not replace one, so you need one installed
+and already logged in:
+
+| Agent | Install | Verify |
+| --- | --- | --- |
+| Claude Code (default) | `npm install -g @anthropic-ai/claude-code` | `claude --version` |
+| Codex | OpenAI's instructions | `codex --version` |
+| OpenCode | OpenCode's instructions | `opencode --version` |
+
+Only one is needed. Run it once by hand first, so you know it works without
+NightShift in the way.
+
+### Other ways to install
 
 ```powershell
-npm install -g github:Junaed93/NightShift
-```
-
-For development, clone and link:
-
-```powershell
+npm install -g github:Junaed93/NightShift    # newest commit, unreleased
 git clone https://github.com/Junaed93/NightShift.git D:\nightshift
-cd D:\nightshift
-npm link                          # gives you `nightshift` on PATH, everywhere
+cd D:\nightshift; npm link                   # for working on NightShift itself
 ```
 
-Offline, move the tarball by hand:
+## First run, step by step
+
+Do this in order. Nothing costs money until step 6.
+
+### 1. Make a practice repo
+
+Do not start with your real project.
 
 ```powershell
-npm pack                          # -> junaed93-nightshift-0.1.0.tgz
-npm install -g .\junaed93-nightshift-0.1.0.tgz
+mkdir C:\code\demo
+cd C:\code\demo
+git init
+"# demo" | Set-Content README.md
+git add -A
+git commit -m "first commit"
 ```
 
-## Quickstart
+### 2. Let NightShift set itself up
+
+From inside the repo:
 
 ```powershell
-# 1. scaffold the repo you want worked on
-nightshift init --cwd C:\code\myapp
-
-# 2. set the gate to your real check
-#    C:\code\myapp\nightshift.config.json -> "gate": ["npm test", "npm run build"]
-
-# 3. prove the plumbing for free (no model calls)
-nightshift run --cwd C:\code\myapp --dry-run --once
-
-# 4. one real task
-nightshift run --cwd C:\code\myapp --once
-
-# 5. the whole queue, then read the report
-nightshift run --cwd C:\code\myapp
-nightshift status --cwd C:\code\myapp
+nightshift init
 ```
 
-Without a global install, run it in place:
-`node D:\nightshift\src\cli.mjs run --cwd C:\code\myapp`.
+It prints what it wrote:
+
+```
+wrote C:\code\demo\nightshift.config.json
+wrote C:\code\demo\tasks\queue\000-example.md
+added .nightshift/ to .gitignore
+```
+
+### 3. Tell it how to check work
+
+Open `C:\code\demo\nightshift.config.json` and replace the `gate` line with:
+
+```json
+"gate": ["node --version"]
+```
+
+This is a **fake gate** that always passes. It is only here so you can watch the
+machinery work without needing tests. On a real project, use your real check:
+
+```json
+"gate": ["npm test", "npm run build"]
+```
+
+Every gate command must exit 0 or the task fails. This is the most important
+setting in the file. The agent saying "done" counts for nothing; the gate decides.
+
+### 4. Write one task
+
+Replace the contents of `tasks\queue\000-example.md` with:
+
+```md
+# Add a greeting to the README
+
+Append a line to README.md that says exactly: Hello from NightShift
+
+Do not change any other file.
+```
+
+The filename is the task id and the branch name: `fix-login.md` becomes branch
+`nightshift/fix-login`.
+
+### 5. Practise for free
+
+```powershell
+nightshift run --dry-run --once
+```
+
+`--dry-run` swaps in a fake agent. No model calls, no money. Expect:
+
+```
+dry run: using the dummy harness, no model calls
+done   000-example (1s)
+nightshift: 1/1 task(s) done in 1s.
+```
+
+If it says `failed ... gate failed`, your gate command is wrong. Fix step 3.
+
+### 6. Do it for real
+
+```powershell
+nightshift run --once
+```
+
+Same thing, but now the agent really edits files. One task only, so you can
+watch. Expect a minute or two and a few cents.
+
+### 7. Check the work
+
+```powershell
+nightshift status
+git log --oneline -3
+git diff main nightshift/000-example
+```
+
+Nothing was merged. The work sits on its own branch. Merge it if you like it:
+
+```powershell
+git merge nightshift/000-example
+```
+
+### 8. Leave it running
+
+Put real tasks in `tasks\queue\`, one file each, then:
+
+```powershell
+nightshift run
+```
+
+Go to bed. In the morning `nightshift status` summarises the night and
+`.nightshift\REPORT.md` has one entry per task, with the diffstat.
+
+## If something goes wrong
+
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| `nightshift is not recognized` | npm global folder not on `PATH` | add the output of `npm config get prefix` to `PATH`, reopen the terminal |
+| `failed ... gate failed` | gate command exits non-zero | run that command yourself in the repo and fix it |
+| `failed ... protected path` | agent edited tests, CI config, or a lockfile | working as designed; reword the task so it does not need to |
+| `failed ... timed out` | task too big for its minute limit | raise `minutes` in the task, or split it into two |
+| nothing happens | `tasks\queue\` is empty | add a `.md` file there |
+| `failed ... not found` | the agent CLI is missing | `claude --version`, install it if that fails |
 
 ## A task
 
